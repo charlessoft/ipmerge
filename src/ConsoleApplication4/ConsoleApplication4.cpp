@@ -7,6 +7,8 @@
 #include "string.h"
 #include "math.h"
 #include "logger.h"
+#include "utils.h"
+
 #ifdef _WIN32
 #include <windows.h>
 
@@ -56,249 +58,7 @@ unsigned long  GetTickCountPortable() {
 #endif
 
 
-#define FXULONG_MAX 0xffffffffUL //4G
 
-const char CountryCode[255][3] =
-{
-	"",
-	"AD",
-	"AE",
-	"AF",
-	"AG",
-	"AI",
-	"AL",
-	"AM",
-	"AO",
-	"AR",
-	"AS",
-	"AT",
-	"AU",
-	"AW",
-	"AX",
-	"AZ",
-	"BA",
-	"BB",
-	"BD",
-	"BE",
-	"BF",
-	"BG",
-	"BH",
-	"BI",
-	"BJ",
-	"BL",
-	"BM",
-	"BN",
-	"BO",
-	"BQ",
-	"BR",
-	"BS",
-	"BT",
-	"BW",
-	"BY",
-	"BZ",
-	"CA",
-	"CD",
-	"CF",
-	"CG",
-	"CH",
-	"CI",
-	"CK",
-	"CL",
-	"CM",
-	"CN",
-	"CO",
-	"CR",
-	"CU",
-	"CV",
-	"CW",
-	"CY",
-	"CZ",
-	"DE",
-	"DJ",
-	"DK",
-	"DM",
-	"DO",
-	"DZ",
-	"EC",
-	"EE",
-	"EG",
-	"ER",
-	"ES",
-	"ET",
-	"FI",
-	"FJ",
-	"FK",
-	"FM",
-	"FO",
-	"FR",
-	"GA",
-	"GB",
-	"GD",
-	"GE",
-	"GF",
-	"GG",
-	"GH",
-	"GI",
-	"GL",
-	"GM",
-	"GN",
-	"GP",
-	"GQ",
-	"GR",
-	"GT",
-	"GU",
-	"GW",
-	"GY",
-	"HK",
-	"HN",
-	"HR",
-	"HT",
-	"HU",
-	"ID",
-	"IE",
-	"IL",
-	"IM",
-	"IN",
-	"IO",
-	"IQ",
-	"IR",
-	"IS",
-	"IT",
-	"JE",
-	"JM",
-	"JO",
-	"JP",
-	"KE",
-	"KG",
-	"KH",
-	"KI",
-	"KM",
-	"KN",
-	"KP",
-	"KR",
-	"KW",
-	"KY",
-	"KZ",
-	"LA",
-	"LB",
-	"LC",
-	"LI",
-	"LK",
-	"LR",
-	"LS",
-	"LT",
-	"LU",
-	"LV",
-	"LY",
-	"MA",
-	"MC",
-	"MD",
-	"ME",
-	"MF",
-	"MG",
-	"MH",
-	"MK",
-	"ML",
-	"MM",
-	"MN",
-	"MO",
-	"MP",
-	"MQ",
-	"MR",
-	"MS",
-	"MT",
-	"MU",
-	"MV",
-	"MW",
-	"MX",
-	"MY",
-	"MZ",
-	"NA",
-	"NC",
-	"NE",
-	"NF",
-	"NG",
-	"NI",
-	"NL",
-	"NO",
-	"NP",
-	"NR",
-	"NU",
-	"NZ",
-	"OM",
-	"PA",
-	"PE",
-	"PF",
-	"PG",
-	"PH",
-	"PK",
-	"PL",
-	"PM",
-	"PR",
-	"PS",
-	"PT",
-	"PW",
-	"PY",
-	"QA",
-	"RE",
-	"RO",
-	"RS",
-	"RU",
-	"RW",
-	"SA",
-	"SB",
-	"SC",
-	"SD",
-	"SE",
-	"SG",
-	"SI",
-	"SK",
-	"SL",
-	"SM",
-	"SN",
-	"SO",
-	"SR",
-	"SS",
-	"ST",
-	"SV",
-	"SX",
-	"SY",
-	"SZ",
-	"TC",
-	"TD",
-	"TG",
-	"TH",
-	"TJ",
-	"TK",
-	"TL",
-	"TM",
-	"TN",
-	"TO",
-	"TR",
-	"TT",
-	"TV",
-	"TW",
-	"TZ",
-	"UA",
-	"UG",
-	"US",
-	"UY",
-	"UZ",
-	"VA",
-	"VC",
-	"VE",
-	"VG",
-	"VI",
-	"VN",
-	"VU",
-	"WF",
-	"WS",
-	"YE",
-	"YT",
-	"ZA",
-	"ZM",
-	"ZW",
-};
 
 
 enum FileType
@@ -313,8 +73,8 @@ enum FileType
 #define CountryMax 8
 union CountryUnion
 {
-	unsigned char g[CountryMax];
-	unsigned long long ulg;
+	unsigned char g[CountryMax]; 
+	unsigned long long ulg; // 8个字节
 };
 
 
@@ -449,12 +209,14 @@ struct Data
 
 	void GenBestCountry()
 	{
+		// 8个字节, 如果==0,说明没有国家字符串
 		if (0 == uCountry.ulg)
 		{
 			ucBestCountry = 0;
 		}
 		else if (0 == uCountry.g[1])
 		{
+			// 如果有一个国家
 			ucBestCountry = uCountry.g[0];
 		}
 		else
@@ -551,7 +313,7 @@ bool ReadLine(
 
 	if (File_Country == type)
 	{
-		return i == 3;
+		return i == 9;
 	}
 	else if (File_City == type)
 	{
@@ -651,6 +413,183 @@ void UL2BestCountry(unsigned long long num, char *country)
 	a[1] = num & 0xff;
 #endif
 	strcpy(country, Num2CountryEx(BestCountry(a)));
+}
+
+
+bool ReadCountryLine(
+	char* buf,
+	char* sip, int sipSize,
+	char* eip, int eipSize,
+	char* country, int countrySize,
+	char* country1, int countrySize1,
+	char* country2, int countrySize2,
+	char* country3, int countrySize3,
+	char* country4, int countrySize4,
+	char* country5, int countrySize5
+	){
+
+	char* tempBuf = nullptr;
+	char* sp = buf; 
+
+	int i = 0;
+	while (nullptr != (sp = strtok_r(sp, ",", &tempBuf)))
+	{
+		if (0 == i)
+		{
+			strncpy(sip, sp, sipSize - 1);
+		}
+		else if (1 == i)
+		{
+			strncpy(eip, sp, eipSize - 1);
+		}
+		else if (2 == i)
+		{
+			strncpy(country, sp, countrySize - 1);
+		}
+
+		//if (File_City == type)
+		{
+			if (3 == i)
+			{
+				strncpy(country1, sp, countrySize1 - 1);
+
+				//strncpy(state, sp, stateSize - 1);
+			}
+			else if (4 == i)
+			{
+				strncpy(country2, sp, countrySize2 - 1);
+
+				//strncpy(city, sp, citySize - 1);
+			}
+			else if (5 == i)
+			{
+				strncpy(country3, sp, countrySize3 - 1);
+
+				//(*latitude) = atof(sp);
+			}
+			else if (6 == i)
+			{
+				strncpy(country4, sp, countrySize4 - 1);
+				//(*longitude) = atof(sp);
+			}
+			else if (7 == i)
+			{
+				strncpy(country5, sp, countrySize5 - 1);
+				//(*longitude) = atof(sp);
+			}
+			else if (8 == i)
+			{
+
+				//strncpy(country5, sp, countrySize5 - 1);
+				//(*longitude) = atof(sp);
+			}
+		}
+
+		//printf(sp);
+		//printf("\r\n");
+		sp = nullptr;
+		i++;
+	}
+	return true;
+	//return i == 9;
+	//return false;
+
+// 	if (File_Country == type)
+// 	{
+// 		return i == 9;
+// 	}
+// 	else if (File_City == type)
+// 	{
+// 		return i == 8;
+// 	}
+// 	else
+// 	{
+// 		return false;
+// 	}
+
+}
+
+// country
+void ReadCountryFile(char* filename, struct Data* ip,  unsigned long start, unsigned long end)
+{
+	char buf[512] = { 0 };
+
+	char sip[32] = { 0 };
+	char eip[32] = { 0 };
+	char country[32] = { 0 };
+	char country1[32] = { 0 };
+	char country2[32] = { 0 };
+	char country3[32] = { 0 };
+	char country4[32] = { 0 };
+	char country5[32] = { 0 };
+
+
+
+	char state[CITY_STRING_SIZE] = { 0 };
+	char city[CITY_STRING_SIZE] = { 0 };
+	double latitude = 0;
+	double longitude = 0;
+
+	unsigned long usip = 0;
+	unsigned long ueip = 0;
+	unsigned char ucountry = 0;
+	unsigned char ucountry1 = 0;
+	unsigned char ucountry2 = 0;
+	unsigned char ucountry3 = 0;
+	unsigned char ucountry4 = 0;
+	unsigned char ucountry5 = 0;
+
+
+	unsigned long m = 0;
+
+	FILE* fp = fopen(filename, "rb");
+	if (fp)
+	{
+		while (fgets(buf, 256, fp) != NULL)
+		{
+			memset(sip, 0, 32);
+			memset(eip, 0, 32);
+			memset(country, 0, 32);
+			memset(state, 0, CITY_STRING_SIZE);
+			memset(city, 0, CITY_STRING_SIZE);
+			latitude = 0;
+			longitude = 0;
+
+			if (ReadCountryLine(buf, sip, 32, eip, 32, country, 32,country1,32,country2,32,country3,32,country4,32,country5,32))
+			{
+				usip = Ip2Num(sip);
+				ueip = Ip2Num(eip);
+				ucountry = Country2Num(country);
+				ucountry1 = Country2Num(country1);
+				ucountry2 = Country2Num(country2);
+				ucountry3 = Country2Num(country3);
+				ucountry4 = Country2Num(country4);
+				ucountry5 = Country2Num(country5);
+
+				if (ucountry == 0)
+					continue;
+				if (usip > end)
+					break;
+				if (ueip < start)
+					continue;
+
+				for (unsigned long i = (usip > start ? usip : start); i <= ueip && i < end; i++)
+				{
+					m = i - start;
+
+					ip[m].uCountry.g[0] = ucountry;
+					ip[m].uCountry.g[1] = ucountry1;
+					ip[m].uCountry.g[2] = ucountry2;
+					ip[m].uCountry.g[3] = ucountry3;
+					ip[m].uCountry.g[4] = ucountry4;
+					ip[m].uCountry.g[5] = ucountry5;
+
+				}
+
+			}
+
+		}
+	}
 }
 
 void ReadFile(char* filename, struct Data *ip, FileType type, unsigned long start, unsigned long end)
@@ -909,20 +848,25 @@ int main()
 
 		unsigned long start = ONE_SIZE * i;
 		unsigned long end = ONE_SIZE * (i + 1);
-
-		char sip[32] = { 0 };
-		Num2Ip(start, sip);
-
-		printf("%lu %s\r\n", i, sip);
+		LOG(INFO) << "处理" << i << "批次";
+// 
+// 
+// 		char sip[32] = { 0 };
+// 		Num2Ip(start, sip);
+// 
+// 		printf("%lu %s\r\n", i, sip);
 #if 1
-		ReadFile("d:\\testcsv\\asn-country-ipv4.csv", ip, File_Country, start, end);
-		ReadFile("d:\\testcsv\\geo-asn-country-ipv4.csv", ip, File_Country, start, end);
-		ReadFile("d:\\testcsv\\dbip-country-ipv4.csv", ip, File_Country, start, end);
-		ReadFile("d:\\testcsv\\geolite2-country-ipv4.csv", ip, File_Country, start, end);
-		ReadFile("d:\\testcsv\\iptoasn-country-ipv4.csv", ip, File_Country, start, end);
+// 		ReadFile(".\\origin\\asn-country-ipv4.csv", ip, File_Country, start, end);
+// 		ReadFile(".\\origin\\geo-asn-country-ipv4.csv", ip, File_Country, start, end);
+// 		ReadFile(".\\origin\\dbip-country-ipv4.csv", ip, File_Country, start, end);
+// 		ReadFile(".\\origin\\geolite2-country-ipv4.csv", ip, File_Country, start, end);
 
-		ReadFile("d:\\testcsv\\dbip-city-ipv4.csv", ip, File_City, start, end);
+		ReadCountryFile(".\\testcsv\\out.csv", ip, start, end);
+		ReadFile(".\\testcsv\\dbip-city-ipv4.csv", ip, File_City, start, end);
 
+
+// 		ReadCountryFile("/ipmerge/src/ConsoleApplication4/testcsv/out_origin.csv", ip, start, end);
+// 		ReadFile("./origin/dbip-city-ipv4_bak.csv", ip, File_City,start, end);
 		//WriteFile("d:\\testcsv\\out.csv", ip, File_Country, ONE_SIZE, start, end);
 		WriteFile("d:\\testcsv\\out.csv", ip, File_City, ONE_SIZE, start, end);
 #else
