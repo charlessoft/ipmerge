@@ -673,6 +673,7 @@ int main()
 
 	unsigned long ae = GetTickCountPortable();
 	printf("time:%lf\n", (ae - as) / 1000.0);
+	LOG(INFO) << "time:" << (ae - as) / 1000.0;
 	return 0;
 }
 
