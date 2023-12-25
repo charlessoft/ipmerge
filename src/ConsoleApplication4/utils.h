@@ -7,6 +7,7 @@
 
 #ifdef _WIN32
 #include <psapi.h>
+#pragma warning(disable : 4996)
 
 int GetMemoryInfo() {
 	HANDLE hProcess;
@@ -93,7 +94,7 @@ char** str_split(char* str, const char* delimiter) {
 
 		while (token) {
 			assert(idx < count);
-			*(result + idx++) = _strdup(token);
+			*(result + idx++) = strdup(token);
 			token = strtok(0, delim);
 		}
 		assert(idx == count - 1);
