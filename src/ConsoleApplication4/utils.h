@@ -11,9 +11,13 @@ union ST
 	unsigned long long ulg;
 };
 
+#ifdef _WIN32
+char* strtok_r(char* s, const char* delim, char** save_ptr);
+#endif
+
 
 unsigned long GetTickCountPortable();
-char* strtok_r(char* s, const char* delim, char** save_ptr);
+
 int GetMemoryInfo();
 
 #define FXULONG_MAX 0xffffffffUL //4G
