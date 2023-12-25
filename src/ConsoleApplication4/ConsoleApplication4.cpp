@@ -315,7 +315,7 @@ union ST
 
 bool ReadLine(char *buf, char *sip, char *eip, char *region)
 {
-#if 0
+#if 1
 	char** pdt = str_split(buf, ",");
 
 	strcpy(sip, pdt[0]);
