@@ -7,6 +7,7 @@
 #include "string.h"
 #include "math.h"
 #include "logger.h"
+#include "utils.h"
 #ifdef _WIN32
 #include <windows.h>
 
@@ -314,6 +315,24 @@ union ST
 
 bool ReadLine(char *buf, char *sip, char *eip, char *region)
 {
+#if 0
+	char** pdt = str_split(buf, ",");
+
+	strcpy(sip, pdt[0]);
+	strcpy(eip, pdt[1]);
+	strcpy(region, pdt[2]);
+	for (int j = 0; j < 32; j++)
+	{
+		if (region[j] == '\n' || region[j] == '\r')
+		{
+			region[j] = 0;
+			break;
+		}
+	}
+
+	free_str_split(pdt);
+	return true;
+#else
 	char *tempBuf = nullptr;
 	char *sp = buf;
 
@@ -346,6 +365,9 @@ bool ReadLine(char *buf, char *sip, char *eip, char *region)
 	}
 
 	return i == 3;
+#endif 
+
+	
 }
 
 unsigned long Ip2Num(char *ip)
@@ -625,6 +647,7 @@ int main()
 	union ST *ip = (union ST*)calloc(ONE_SIZE, sizeof(union ST));
 	for (unsigned long i = 0; i < gap; i++)
 	{
+		LOG(INFO) << "处理" << i << "批次";
 		memset(ip, 0, ONE_SIZE* sizeof(union ST));
 
 		unsigned long start = ONE_SIZE * i;
@@ -636,15 +659,15 @@ int main()
 		WriteFile("d:\\out.csv", ip, ONE_SIZE, start, end);
 #else
 
-		ReadFile("./testcsv/asn-country-ipv4.csv", ip, start, end);
-		ReadFile("./testcsv/geo-asn-country-ipv4.csv", ip, start, end);
-		ReadFile("./testcsv/dbip-country-ipv4.csv", ip, start, end);
-		ReadFile("./testcsv/geolite2-country-ipv4.csv", ip, start, end);
-		ReadFile("./testcsv/iptoasn-country-ipv4.csv", ip, start, end);
+		ReadFile("./origin/asn-country-ipv4.csv", ip, start, end);
+		ReadFile("./origin/geo-asn-country-ipv4.csv", ip, start, end);
+		ReadFile("./origin/dbip-country-ipv4.csv", ip, start, end);
+		ReadFile("./origin/geolite2-country-ipv4.csv", ip, start, end);
+		ReadFile("./origin/iptoasn-country-ipv4.csv", ip, start, end);
 
-		WriteFile("./testcsv/out.csv", ip, ONE_SIZE, start, end);
+		WriteFile("./origin/out.csv", ip, ONE_SIZE, start, end);
 
-
+		GetMemoryInfo();
 #endif
 	}
 
