@@ -34,27 +34,27 @@ struct MemoryInfo {
 	long long residentSetSize;
 };
 void GetMemoryInfo() {
-	MemoryInfo memInfo = { 0, 0 };
-	std::string line;
-	std::ifstream statm_file("/proc/self/statm");
-	if (statm_file.is_open()) {
-		std::getline(statm_file, line);
-		std::istringstream iss(line);
-		iss >> memInfo.totalVirtualMem >> memInfo.residentSetSize;
-		statm_file.close();
-	}
-	else {
-		std::cerr << "Unable to open /proc/self/statm\n";
-		return;
-	}
+	//MemoryInfo memInfo = { 0, 0 };
+	//std::string line;
+	//std::ifstream statm_file("/proc/self/statm");
+	//if (statm_file.is_open()) {
+	//	std::getline(statm_file, line);
+	//	std::istringstream iss(line);
+	//	iss >> memInfo.totalVirtualMem >> memInfo.residentSetSize;
+	//	statm_file.close();
+	//}
+	//else {
+	//	std::cerr << "Unable to open /proc/self/statm\n";
+	//	return;
+	//}
 
-	// Convert pages to bytes
-	long long pageSize = sysconf(_SC_PAGESIZE);
-	memInfo.totalVirtualMem *= pageSize;
-	memInfo.residentSetSize *= pageSize;
+	//// Convert pages to bytes
+	//long long pageSize = sysconf(_SC_PAGESIZE);
+	//memInfo.totalVirtualMem *= pageSize;
+	//memInfo.residentSetSize *= pageSize;
 
-	std::cout << "Total Virtual Memory: " << memInfo.totalVirtualMem << " bytes\n";
-	std::cout << "Resident Set Size: " << memInfo.residentSetSize << " bytes\n";
+	//std::cout << "Total Virtual Memory: " << memInfo.totalVirtualMem << " bytes\n";
+	//std::cout << "Resident Set Size: " << memInfo.residentSetSize << " bytes\n";
 }
 
 #endif
