@@ -4,7 +4,59 @@
 #include <stdlib.h>
 #include <assert.h>
 
+
+#ifdef _WIN32
 #include <psapi.h>
+
+int GetMemoryInfo() {
+	HANDLE hProcess;
+	DWORD processID = GetCurrentProcessId();
+
+	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+	if (NULL == hProcess)
+		return 1;
+
+	PROCESS_MEMORY_COUNTERS pmc;
+	if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc)))
+	{
+		printf("Current process memory usage: %d KB\n", pmc.WorkingSetSize / 1024);
+	}
+
+	CloseHandle(hProcess);
+}
+#else
+#include <string>
+#include <sstream>
+#include <unistd.h> // for sysconf
+struct MemoryInfo {
+	long long totalVirtualMem;
+	long long residentSetSize;
+};
+void GetMemoryInfo() {
+	MemoryInfo memInfo = { 0, 0 };
+	std::string line;
+	std::ifstream statm_file("/proc/self/statm");
+	if (statm_file.is_open()) {
+		std::getline(statm_file, line);
+		std::istringstream iss(line);
+		iss >> memInfo.totalVirtualMem >> memInfo.residentSetSize;
+		statm_file.close();
+	}
+	else {
+		std::cerr << "Unable to open /proc/self/statm\n";
+		return;
+	}
+
+	// Convert pages to bytes
+	long long pageSize = sysconf(_SC_PAGESIZE);
+	memInfo.totalVirtualMem *= pageSize;
+	memInfo.residentSetSize *= pageSize;
+
+	std::cout << "Total Virtual Memory: " << memInfo.totalVirtualMem << " bytes\n";
+	std::cout << "Resident Set Size: " << memInfo.residentSetSize << " bytes\n";
+}
+
+#endif
 
 
 #define FXULONG_MAX 0xffffffffUL //4G
@@ -309,20 +361,5 @@ const char CountryCode[255][3] =
 
 
 
-int GetMemoryInfo() {
-	HANDLE hProcess;
-	DWORD processID = GetCurrentProcessId();
 
-	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
-	if (NULL == hProcess)
-		return 1;
-
-	PROCESS_MEMORY_COUNTERS pmc;
-	if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc)))
-	{
-		printf("Current process memory usage: %d KB\n", pmc.WorkingSetSize / 1024);
-	}
-
-	CloseHandle(hProcess);
-}
 #endif
