@@ -88,7 +88,8 @@ struct MemoryInfo {
 	long long totalVirtualMem;
 	long long residentSetSize;
 };
-void GetMemoryInfo() {
+int GetMemoryInfo() {
+	return 0;
 	//MemoryInfo memInfo = { 0, 0 };
 	//std::string line;
 	//std::ifstream statm_file("/proc/self/statm");
