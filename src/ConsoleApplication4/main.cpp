@@ -24,7 +24,7 @@ int main()
 {
 	Logger::Initialize(0);
 	LOG(INFO) << "Git commit ID: " << GIT_COMMIT_ID ;
-	LOG(INFO) << "Build time: " << BUILD_TIME ;
+	LOG(INFO) << "Build Time: " << BUILD_TIME ;
 
 	FILE * fp = fopen("./testcsv/out.csv", "wb+");
 	if (fp)
