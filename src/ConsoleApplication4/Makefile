@@ -1,2 +1,5 @@
 run:
-	g++ -std=c++11 ConsoleApplication4.cpp logger.cc
+	g++ -o ipmerge -std=c++11 ConsoleApplication4.cpp logger.cc
+
+clean:
+	rm -fr ipmerge
