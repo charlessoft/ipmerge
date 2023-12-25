@@ -6,6 +6,56 @@
 
 
 #ifdef _WIN32
+#include <windows.h>
+
+unsigned long GetTickCountPortable() {
+	return GetTickCount();
+}
+
+char* strtok_r(char* s, const char* delim, char** save_ptr) {
+	char* token;
+	/*判断参数s是否为NULL，如果是NULL就以传递进来的save_ptr作为起始分解位置；若不是NULL，则以s开始切分*/
+	if (s == NULL) s = *save_ptr;
+
+	/* Scan leading delimiters.  */
+	s += strspn(s, delim);
+	/*判断当前待分解的位置是否为'\0'，若是则返回NULL（联系到（一）中所说对返回值为NULL的解释）；不是则继续。*/
+	if (*s == '\0')
+		return NULL;
+
+	/* Find the end of the token.  */
+	token = s;
+	s = strpbrk(token, delim);
+	if (s == NULL)
+		/* This token finishes the string.  */
+		*save_ptr = strchr(token, '\0');
+	else {
+		/* Terminate the token and make *SAVE_PTR point past it.  */
+		*s = '\0';
+		*save_ptr = s + 1;
+	}
+
+	return token;
+}
+
+
+
+#else
+#include <time.h>
+
+unsigned long  GetTickCountPortable() {
+	struct timespec ts;
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
+		// Handle error
+		return 0;
+	}
+	return (unsigned long long)(ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+}
+#endif
+
+
+
+#ifdef _WIN32
 #include <psapi.h>
 #pragma warning(disable : 4996)
 
