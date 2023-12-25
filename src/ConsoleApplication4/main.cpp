@@ -8,6 +8,16 @@
 #include "math.h"
 #include "logger.h"
 #include "utils.h"
+
+#ifndef GIT_COMMIT_ID
+#define GIT_COMMIT_ID "unknown"
+#endif
+
+#ifndef BUILD_TIME
+#define BUILD_TIME "unknown"
+#endif
+
+
 #ifdef _WIN32
 #include <windows.h>
 
@@ -505,7 +515,7 @@ void UL2BestRegion(unsigned long long num, char *region)
 	BestRegion(a, region);
 }
 
-void ReadFile(char* filename, union ST *ip, unsigned long start, unsigned long end)
+void ReadStandCountryFile(char* filename, union ST *ip, unsigned long start, unsigned long end)
 {
 	char buf[256] = { 0 };
 
@@ -630,7 +640,9 @@ void WriteFile(char* filename, union ST *ip, unsigned long onesize, unsigned lon
 int main()
 {
 	Logger::Initialize(0);
-	LOG(INFO) << "begin";
+	LOG(INFO) << "Git commit ID: " << GIT_COMMIT_ID ;
+	LOG(INFO) << "Build time: " << BUILD_TIME ;
+
 	FILE * fp = fopen("./testcsv/out.csv", "wb+");
 	if (fp)
 	{
@@ -659,11 +671,11 @@ int main()
 		WriteFile("d:\\out.csv", ip, ONE_SIZE, start, end);
 #else
 
-		ReadFile("./origin/asn-country-ipv4.csv", ip, start, end);
-		ReadFile("./origin/geo-asn-country-ipv4.csv", ip, start, end);
-		ReadFile("./origin/dbip-country-ipv4.csv", ip, start, end);
-		ReadFile("./origin/geolite2-country-ipv4.csv", ip, start, end);
-		ReadFile("./origin/iptoasn-country-ipv4.csv", ip, start, end);
+		ReadStandCountryFile("./origin/asn-country-ipv4.csv", ip, start, end);
+		ReadStandCountryFile("./origin/geo-asn-country-ipv4.csv", ip, start, end);
+		ReadStandCountryFile("./origin/dbip-country-ipv4.csv", ip, start, end);
+		ReadStandCountryFile("./origin/geolite2-country-ipv4.csv", ip, start, end);
+		ReadStandCountryFile("./origin/iptoasn-country-ipv4.csv", ip, start, end);
 
 		WriteFile("./origin/out.csv", ip, ONE_SIZE, start, end);
 
