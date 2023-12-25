@@ -143,7 +143,42 @@ void BestRegion(unsigned char* num, char* region)
 
 void ST2BestRegion(union ST num, char* region)
 {
-	BestRegion(num.g, region);
+	//BestRegion(num.g, region);
+
+#define MAX_VAL 256
+
+/*sprintf(region, "%s,%s,%s,%s,%s,%s,%s,%s",
+	REGION[num.g[0]], REGION[num.g[1]], REGION[num.g[2]], REGION[num.g[3]], REGION[num.g[4]], REGION[num.g[5]], REGION[num.g[6]], REGION[num.g[7]]);*/
+
+	struct {
+		int count;
+		int lastIndex;
+	} stats[MAX_VAL] = { 0 };
+
+	int maxCount = 0;
+	int mostFrequentValue = -1;
+
+	for (int i = 0; i < 8; ++i) {
+		++stats[num.g[i]].count;
+		stats[num.g[i]].lastIndex = i;
+
+		if (stats[num.g[i]].count > maxCount) {
+			maxCount = stats[num.g[i]].count;
+			mostFrequentValue = num.g[i];
+		}
+	}
+
+	sprintf(region, "%s,%s,%s,%s,%s,%s,%s,%s",
+		REGION[num.g[stats[mostFrequentValue].lastIndex]],
+		REGION[num.g[0]], REGION[num.g[1]], REGION[num.g[2]], REGION[num.g[3]], REGION[num.g[4]], REGION[num.g[5]], REGION[num.g[6]]);
+
+	/*if (mostFrequentValue != -1) {
+		printf("The most frequent value is %d, it appears %d times, and the last occurrence is at index %d.\n", mostFrequentValue, maxCount, stats[mostFrequentValue].lastIndex);
+	}
+	else {
+		printf("No values found.\n");
+	}*/
+
 }
 
 
