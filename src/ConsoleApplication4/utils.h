@@ -1,122 +1,24 @@
 #ifndef UTILS_H_
 #define  UTILS_H_
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
 
-
-#ifdef _WIN32
-#include <psapi.h>
-#pragma warning(disable : 4996)
-
-int GetMemoryInfo() {
-	HANDLE hProcess;
-	DWORD processID = GetCurrentProcessId();
-
-	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
-	if (NULL == hProcess)
-		return 1;
-
-	PROCESS_MEMORY_COUNTERS pmc;
-	if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc)))
-	{
-		printf("Current process memory usage: %d KB\n", pmc.WorkingSetSize / 1024);
-	}
-
-	CloseHandle(hProcess);
-}
-#else
-#include <string>
-#include <sstream>
-#include <unistd.h> // for sysconf
-struct MemoryInfo {
-	long long totalVirtualMem;
-	long long residentSetSize;
+//这里申请4个 占用16G空间 
+//不要超过4 因为 lnewRegion 是unsigned long
+//可以 改  2  4 8
+#define SIZE4GxN 8
+union ST
+{
+	unsigned char g[SIZE4GxN];
+	unsigned long long ulg;
 };
-void GetMemoryInfo() {
-	//MemoryInfo memInfo = { 0, 0 };
-	//std::string line;
-	//std::ifstream statm_file("/proc/self/statm");
-	//if (statm_file.is_open()) {
-	//	std::getline(statm_file, line);
-	//	std::istringstream iss(line);
-	//	iss >> memInfo.totalVirtualMem >> memInfo.residentSetSize;
-	//	statm_file.close();
-	//}
-	//else {
-	//	std::cerr << "Unable to open /proc/self/statm\n";
-	//	return;
-	//}
 
-	//// Convert pages to bytes
-	//long long pageSize = sysconf(_SC_PAGESIZE);
-	//memInfo.totalVirtualMem *= pageSize;
-	//memInfo.residentSetSize *= pageSize;
 
-	//std::cout << "Total Virtual Memory: " << memInfo.totalVirtualMem << " bytes\n";
-	//std::cout << "Resident Set Size: " << memInfo.residentSetSize << " bytes\n";
-}
-
-#endif
-
+unsigned long GetTickCountPortable();
+char* strtok_r(char* s, const char* delim, char** save_ptr);
+int GetMemoryInfo();
 
 #define FXULONG_MAX 0xffffffffUL //4G
 
-char** str_split(char* str, const char* delimiter) {
-	char** result;
-	size_t count = 0;
-	char* tmp = str;
-	char* last_comma = 0;
-	char delim[2];
-	delim[0] = delimiter[0];
-	delim[1] = 0;
-
-	/* Count how many elements will be in the array */
-	while (*tmp) {
-		if (delimiter[0] == *tmp) {
-			count++;
-			last_comma = tmp;
-		}
-		tmp++;
-	}
-
-	/* Add space for trailing token */
-	count += last_comma < (str + strlen(str) - 1);
-
-	/* Add space for terminating null string so caller knows where the list of returned strings ends. */
-	count++;
-
-	result = (char** )malloc(sizeof(char*) * count);
-
-	if (result) {
-		size_t idx = 0;
-		char* token = strtok(str, delim);
-
-		while (token) {
-			assert(idx < count);
-			*(result + idx++) = strdup(token);
-			token = strtok(0, delim);
-		}
-		assert(idx == count - 1);
-		*(result + idx) = 0;
-	}
-
-	return result;
-}
-
-
-void free_str_split(char** strArray) {
-	if (strArray) {
-		for (int i = 0; strArray[i] != NULL; i++) {
-			free(strArray[i]);
-		}
-		free(strArray);
-	}
-}
-
-
-
-const char CountryCode[255][3] =
+const char REGION[255][3] =
 {
 	"",
 	"AD",
@@ -357,6 +259,29 @@ const char CountryCode[255][3] =
 	"ZM",
 	"ZW",
 };
+
+
+
+
+
+
+
+unsigned long Ip2Num(char* ip);
+
+
+
+void Num2Ip(unsigned long num, char* ip);
+
+
+unsigned char Region2Num(char* region);
+
+void Num2Region(unsigned char r, char* region);
+
+
+void UL2Region(unsigned long long num, char* region);
+
+
+void ST2Region(union ST num, char* region);
 
 
 
